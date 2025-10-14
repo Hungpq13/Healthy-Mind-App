@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthy_mind_app/repository/auth_repository.dart';
 
 class InformationUserWidget extends StatefulWidget {
   const InformationUserWidget({super.key});
@@ -10,17 +11,24 @@ class InformationUserWidget extends StatefulWidget {
 class _InformationUserWidgetState extends State<InformationUserWidget> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'Welcome to Healthy Mind App',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            Text('This is the user screen.', style: TextStyle(fontSize: 16)),
+            const Text('This is the user screen.',
+                style: TextStyle(fontSize: 16)),
+            ElevatedButton(
+                onPressed: () {
+                  AuthRepository authRepository = AuthRepository();
+                  authRepository.signOut();
+                },
+                child: const Text('Sign Out')),
           ],
         ),
       ),
