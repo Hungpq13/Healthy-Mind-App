@@ -1,8 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-import 'package:healthy_mind_app/auth/bloc/auth_event.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthy_mind_app/repository/auth_repository.dart';
 import 'package:healthy_mind_app/utils/const.dart';
 import 'package:healthy_mind_app/widgets/appbar_widget.dart';
+import 'package:healthy_mind_app/widgets/bottom_navigation/bottom_custom.dart';
 import 'package:healthy_mind_app/widgets/login_view/register_widget.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -15,6 +18,7 @@ class LoginWidget extends StatefulWidget {
 class LoginWidgetState extends State<LoginWidget> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _obscureText = true;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -101,14 +105,21 @@ class LoginWidgetState extends State<LoginWidget> {
                 ],
               ),
               child: TextField(
-                obscureText: true,
+                obscureText: _obscureText,
                 controller: _passwordController, // Gán controller
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(), // Thêm viền
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(), // Thêm viền
                   labelText: 'Mật khẩu', // Nhãn
                   hintText: 'Nhập mật khẩu',
-                  suffixIcon: Icon(Icons.visibility),
-                  // Gợi ý
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                      icon: _obscureText == true
+                          ? const Icon(Icons.remove_red_eye)
+                          : const Icon(Icons.visibility_off)),
                 ),
               )),
           const SizedBox(height: 10),
@@ -125,11 +136,37 @@ class LoginWidgetState extends State<LoginWidget> {
               ),
             ),
             onPressed: () async {
-              AuthRepository authRepository = AuthRepository();
-              authRepository.signIn(
-                  email: _nameController.text,
-                  password: _passwordController.text);
-              // SignInRequested(_nameController.text, _passwordController.text);
+              // Use the repository provided at app level so state and listeners are consistent
+              final authRepository = context.read<AuthRepository>();
+
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) =>
+                    const Center(child: CircularProgressIndicator()),
+              );
+
+              try {
+                await authRepository.signIn(
+                  email: _nameController.text.trim(),
+                  password: _passwordController.text,
+                );
+
+                // close loading
+                Navigator.of(context).pop();
+
+                // navigate to Home (replace current route)
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const BottomCustomNav()),
+                );
+              } on Exception catch (e) {
+                Navigator.of(context).pop(); // close loading
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text('Đăng nhập thất bại: ${e.toString()}')),
+                );
+              }
+
               //    const CircularProgressIndicator();
             },
             child: const Text(

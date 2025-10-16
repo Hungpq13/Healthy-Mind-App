@@ -6,20 +6,10 @@ abstract class AuthEvent extends Equatable {
 }
 
 // Event khi người dùng yêu cầu đăng nhập
-class SignInRequested extends AuthEvent {
-  final String email;
-  final String password;
-
-  SignInRequested(this.email, this.password);
-}
+class SignInRequested extends AuthEvent {}
 
 // Event khi người dùng yêu cầu đăng ký
-class SignUpRequested extends AuthEvent {
-  final String email;
-  final String password;
-
-  SignUpRequested(this.email, this.password);
-}
+class SignUpRequested extends AuthEvent {}
 
 // Event khi người dùng yêu cầu đăng xuất
 class SignOutRequested extends AuthEvent {}

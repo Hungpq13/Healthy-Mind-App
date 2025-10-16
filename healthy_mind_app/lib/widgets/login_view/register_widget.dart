@@ -1,5 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-import 'package:healthy_mind_app/auth/bloc/auth_event.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthy_mind_app/widgets/appbar_widget.dart';
 import 'package:healthy_mind_app/repository/auth_repository.dart';
 import 'package:healthy_mind_app/utils/const.dart';
@@ -15,6 +17,7 @@ class RegisterWidget extends StatefulWidget {
 class RegisterWidgetState extends State<RegisterWidget> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _obscureText = true;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -87,7 +90,7 @@ class RegisterWidgetState extends State<RegisterWidget> {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(), // Thêm viền
                   labelText: 'Tài khoản', // Nhãn
-                  hintText: 'Nhập tài khoản', // Gợi ý
+                  hintText: 'Nhập tài khoản (VD: abc@home.com)', // Gợi ý
                 ),
               )),
           Container(
@@ -109,13 +112,21 @@ class RegisterWidgetState extends State<RegisterWidget> {
                 ],
               ),
               child: TextField(
-                obscureText: true,
+                obscureText: _obscureText,
                 controller: _passwordController, // Gán controller
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(), // Thêm viền
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(), // Thêm viền
                   labelText: 'Mật khẩu', // Nhãn
                   hintText: 'Nhập mật khẩu',
-                  suffixIcon: Icon(Icons.visibility),
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                      icon: _obscureText == true
+                          ? const Icon(Icons.remove_red_eye)
+                          : const Icon(Icons.visibility_off)),
                   // Gợi ý
                 ),
               )),
@@ -133,11 +144,44 @@ class RegisterWidgetState extends State<RegisterWidget> {
               ),
             ),
             onPressed: () async {
-              AuthRepository authRepository = AuthRepository();
-              authRepository.signUp(
-                  email: _nameController.text,
-                  password: _passwordController.text);
-              SignUpRequested(_nameController.text, _passwordController.text);
+              final authRepository = context.read<AuthRepository>();
+
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) =>
+                    const Center(child: CircularProgressIndicator()),
+              );
+
+              try {
+                await authRepository.signUp(
+                  email: _nameController.text.trim(),
+                  password: _passwordController.text,
+                );
+
+                // close loading
+                Navigator.of(context).pop();
+
+                // navigate to Home (replace current route)
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const LoginWidget()),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Đăng ký thanh công, mời bạn đăng nhập')),
+                );
+              } on Exception catch (e) {
+                Navigator.of(context).pop(); // close loading
+                _passwordController.text.length < 6
+                    ? ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Mật khẩu phải có ít nhất 6 ký tự')),
+                      )
+                    : ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text('Đăng ký thất bại, ${e.toString()}')),
+                      );
+              }
               //    const CircularProgressIndicator();
             },
             child: const Text(
