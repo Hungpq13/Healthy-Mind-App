@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1076130987429",
+    "project_id": "healthy-mind-c8d8e",
+    "storage_bucket": "healthy-mind-c8d8e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1076130987429:android:da374db67e0f35b596fc4c",
+        "android_client_info": {
+          "package_name": "com.example.healthy_mind_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1076130987429-oqhbpj0q7gpu269an8jqolkce5g17mjc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIjhVUeJokYGURa2fvadAiCBc9jFkbNdg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1076130987429-oqhbpj0q7gpu269an8jqolkce5g17mjc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1076130987429-e8gei2vjtrtm3v1dqocusr6iom43kfkp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.healthyMindApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

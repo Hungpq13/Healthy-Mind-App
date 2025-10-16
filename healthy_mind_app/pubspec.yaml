@@ -1,6 +1,6 @@
 name: healthy_mind_app
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -10,7 +10,12 @@ dependencies:
   flutter_bloc: ^9.1.1
   flutter:
     sdk: flutter
-  
+  firebase_core: ^4.1.1
+  meta: ^1.15.0
+  firebase_auth: ^6.1.0
+  equatable: ^2.0.7
+  google_sign_in: ^6.2.2
+  rxdart: ^0.28.0
 
 dev_dependencies:
   flutter_test:
@@ -19,3 +24,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/logo.png
+    - assets/images/logo_gg.png
